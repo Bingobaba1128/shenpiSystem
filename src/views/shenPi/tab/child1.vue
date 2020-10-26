@@ -311,7 +311,7 @@ export default {
       })
     },
     showDataM(data) {
-      window.open(data.url)
+      this.$router.push({ path: '/审批管理/审批详情', query: { data: data.url }})
     },
     bindDanJuId(id) {
       this.$set(this.queryInfo, 'classifyId', id)
