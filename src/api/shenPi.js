@@ -8,7 +8,20 @@ export function loadData(data) {
     method: 'get'
   })
 }
-
+export function loadDept(data) {
+  return request({
+    baseURL: 'http://120.78.186.60:8095',
+    url: data,
+    method: 'get'
+  })
+}
+export function loadPerson(data) {
+  return request({
+    baseURL: 'http://120.78.186.60:8095',
+    url: data,
+    method: 'post'
+  })
+}
 export function addData(paramData) {
   return request({
     baseURL: baseUrl,
@@ -29,6 +42,15 @@ export function postData(paramData) {
   return request({
     baseURL: baseUrl,
     url: '/api/BaoJiaDan?',
+    data: paramData,
+    method: 'put'
+  })
+}
+
+export function readableData(paramData) {
+  return request({
+    baseURL: baseUrl,
+    url: '/api/Approve/readMessage?',
     data: paramData,
     method: 'put'
   })

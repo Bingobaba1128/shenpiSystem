@@ -1,6 +1,7 @@
 <template>
   <el-card class="spClass">
     <div class="tab">
+      <!-- 当前登录人测试： {{userName}} -->
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="待我审批" name="child1" class="special" />
         <el-tab-pane label="我审批的" name="child2" />
@@ -8,7 +9,7 @@
         <el-tab-pane label="抄送我的" name="child4" />
       </el-tabs>
       <!-- <keep-alive> -->
-      <component :is="currentTabComponent" />
+      <component :is="currentTab.currentTabComponent" />
     <!-- </keep-alive> -->
     </div>
   </el-card>
@@ -32,13 +33,34 @@ export default {
   data() {
     return {
       activeName: 'child1',
-      currentTabComponent: child1
+      // currentTabComponent: child1,
+      currentTab: {
+        currentTabComponent: child1
+      },
+      userName: sessionStorage.getItem('employeeName')
+
     }
   },
+  created() {
+    if (JSON.parse(sessionStorage.getItem('currentTag'))) {
+      window.console.log('hereesasasasasa')
+      this.activeName = JSON.parse(sessionStorage.getItem('currentTag'))
+      this.$set(this.currentTab, 'currentTabComponent', this.activeName)
+    }
+    window.console.log(this.activeName, 'currensgyugsayu')
+  },
+//   destroyed() {
+//                   sessionStorage.removeItem('currentTag')
 
+// },
   methods: {
     handleClick() {
-      this.currentTabComponent = this.activeName
+            sessionStorage.removeItem('tabParam')
+
+      this.$set(this.currentTab, 'currentTabComponent', this.activeName)
+
+      // this.currentTab.currentTabComponent = this.activeName
+      window.console.log(this.token)
     }
   }
 }

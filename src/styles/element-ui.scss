@@ -138,3 +138,8 @@ flex: 1;
 // .el-tooltip__popper.is-dark {
 //   top: 220px !important;
 // }
+.el-steps--horizontal {
+  width: 100%!important;
+  padding: 0 250px;
+  justify-content: center;
+}

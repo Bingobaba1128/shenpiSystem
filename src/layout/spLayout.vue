@@ -165,7 +165,7 @@ export default {
                 break
               case '1':
                 this.$set(this.listSOrigin[index], 'icon', this.icon0)
-                this.$set(this.listSOrigin[index], 'title', '已通过')
+                this.$set(this.listSOrigin[index], 'title', '审批通过')
                 this.$set(this.listSOrigin[index], 'personTitle', '审批人')
                 this.$set(this.listSOrigin[index], 'dateTitle', '审批时间')
                 this.$set(this.listSOrigin[index], 'remarkTitle', '备注')
@@ -278,7 +278,7 @@ export default {
 
     padding-bottom:5px;
 }
-.el-steps--horizontal{
+/* .el-steps--horizontal{
   width: 500px !important;
-}
+} */
 </style>

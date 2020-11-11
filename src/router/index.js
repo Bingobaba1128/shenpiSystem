@@ -68,20 +68,34 @@ export const constantRoutes = [
         path: '审批详情',
         name: '审批详情',
         component: () => import('@/views/shenPi/subpage'),
-        meta: { title: '审批详情' }
+        meta: { title: '审批详情' },
+        hidden: true
       }
-      // {
-      //   path: '审批管理',
-      //   name: '审批管理',
-      //   component: () => import('@/views/shenPi'),
-      //   meta: { title: '审批管理' }
-      // },
-      // {
-      //   path: '审批管理',
-      //   name: '审批管理',
-      //   component: () => import('@/views/shenPi'),
-      //   meta: { title: '审批管理' }
-      // }
+    ]
+  },
+  {
+    path: '/审批配置',
+    component: Layout,
+    meta: { title: '审批配置', icon: 'nested' },
+    children: [
+      {
+        path: '系统分类',
+        name: '系统分类',
+        component: () => import('@/views/shenPiPeiZhi/xiTongFenLei'),
+        meta: { title: '系统分类' }
+      },
+      {
+        path: '单据分类',
+        name: '单据分类',
+        component: () => import('@/views/shenPiPeiZhi/danJuFenLei'),
+        meta: { title: '单据分类' }
+      },
+      {
+        path: '审批流程配置',
+        name: '审批流程配置',
+        component: () => import('@/views/shenPiPeiZhi/liuChengPeiZhi'),
+        meta: { title: '审批流程配置' }
+      }
     ]
   },
   // {

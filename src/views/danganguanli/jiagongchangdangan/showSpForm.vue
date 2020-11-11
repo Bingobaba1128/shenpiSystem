@@ -6,7 +6,7 @@
       <el-tabs type="border-card">
         <el-tab-pane label="加工厂档案">
           <!-- 检索区 -->
-          <el-scrollbar style="height: calc(100vh - 415px);">
+          <el-scrollbar style="height: calc(100vh - 155px);">
 
             <el-row :gutter="10" style="margin-left:0;margin-right:0">
               <el-form :inline="true" :model="queryInfo" label-position="right" class="demo-form-inline" label-width="110px">

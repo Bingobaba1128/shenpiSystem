@@ -4,6 +4,7 @@
       <el-col :lg="21" style="leftPart">
         <el-form :inline="true" :model="formInline" class="demo-form-inline" label-width="100px" @submit.native.prevent>
           <el-row class="special">
+
             <el-col :span="6">
               <el-form-item label="申请日期 :">
                 <el-date-picker
@@ -19,31 +20,29 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="业务部门 :">
-                <el-select v-model="queryInfo.classifyName" :disabled="queryInfo.systemId === ''" placeholder="全部" clearable @clear="searchDataM">
+                <el-select v-model="queryInfo.deptName" placeholder="全部" clearable @clear="clearDeptSearchDataM">
                   <el-option
-                    v-for="item in danJuList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.name"
-                    @click.native="bindDanJuId(item.id)"
+                    v-for="item in deptList"
+                    :key="item.deptId"
+                    :label="item.deptName"
+                    :value="item.deptName"
+                    @click.native="bindDeptId(item.deptId)"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="申请人 :">
-                <el-input v-model.trim="queryInfo.faQiPerson" placeholder="" clearable maxlength="100" @keyup.enter.native="searchDataM" @submit.native.prevent />
-
-                <!-- <el-select v-model="queryInfo.faQiPerson" placeholder="全部" clearable @clear="clearData">
+                <el-select v-model="queryInfo.faQiPerson" placeholder="全部" clearable @clear="clearPersonData">
                   <el-option
-                    v-for="item in yeWuDeptList"
-                    :key="item.deptId"
-                    :label="item.deptName"
-                    :value="item.deptName"
-                    @click.native="bindYeWuId(item.deptId)"
+                    v-for="item in personList"
+                    :key="item.employeeId"
+                    :label="item.employeeName"
+                    :value="item.employeeName"
+                    @click.native="bindYeWuId(item.employeeId)"
                     @change="searchDataM"
                   />
-                </el-select> -->
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -130,7 +129,7 @@
         <el-table-column label="审批单号" prop="approveNo" show-overflow-tooltip />
         <el-table-column label="系统分类" prop="systemName" show-overflow-tooltip />
         <el-table-column label="单据分类" prop="classifyName" show-overflow-tooltip />
-        <el-table-column label="系统单号" prop="pkNo" show-overflow-tooltip />
+        <el-table-column label="系统单号" prop="realPkNo" show-overflow-tooltip />
         <el-table-column label="标题" prop="biaoTi" show-overflow-tooltip />
         <el-table-column label="申请人" prop="faQiPerson" show-overflow-tooltip />
         <el-table-column label="申请日期" prop="faQiTime" show-overflow-tooltip />
@@ -164,7 +163,7 @@
 </template>
 
 <script>
-import { loadData, searchData } from '@/api/shenPi'
+import { loadData, searchData, loadDept, loadPerson } from '@/api/shenPi'
 import { toUrlParam } from '@/utils/toUrlParam'
 import { combineObject } from '@/utils/combineObject'
 
@@ -182,13 +181,17 @@ export default {
         stateName: '',
         search: '',
         faQiPersonId: '',
-        employeeId: '',
         systemId: '',
         classifyId: '',
         style_1: '',
-        style: ''
+        style: '',
+        employeeId: sessionStorage.getItem('employeeId'),
+        deptName: '',
+        deptId: ''
 
       },
+      name: sessionStorage.getItem('employeeName'),
+      id: sessionStorage.getItem('employeeId'),
       pageSetting: {
         current: 1,
         size: 10
@@ -197,6 +200,8 @@ export default {
       current: 1,
       danJuList: [],
       systemList: [],
+      personList: [],
+      deptList: '',
       stateList: [
         { name: '待审批', id: '1' },
         { name: '待撤单', id: '2' }
@@ -209,7 +214,15 @@ export default {
   },
   methods: {
     initData() {
-      var url = '/api/Approve?state=0&employeeId=10001&approveState=0&'
+      var param1 = '/ERP/selectAllDepartment'
+      loadDept(param1).then(res => {
+        this.deptList = res.data.data
+      })
+
+      var url = '/api/Approve?state=0&approveState=0&'
+                            if (JSON.parse(sessionStorage.getItem('tabParam'))) {
+      this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
+    }
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
 
       var urlParam = toUrlParam(url, searchInfo)
@@ -220,25 +233,29 @@ export default {
         result.map((item, index) => {
           switch (item.approveState) {
             case '0':
-              this.$set(result[index], 'stateName', '待审批')
+              if (item.style === '撤单') {
+                this.$set(result[index], 'stateName', '待撤单')
+              } else {
+                this.$set(result[index], 'stateName', '待审批')
+              }
               break
             case '1':
               this.$set(result[index], 'stateName', '审批通过')
               break
             case '2':
-              this.$set(result[index], 'stateName', '审批驳回')
+              this.$set(result[index], 'stateName', '驳回')
               break
             case '3':
               this.$set(result[index], 'stateName', '待撤单')
               break
             case '4':
-              this.$set(result[index], 'stateName', '审批取消')
+              this.$set(result[index], 'stateName', '取消')
               break
             case '5':
-              this.$set(result[index], 'stateName', '撤销通过')
+              this.$set(result[index], 'stateName', '撤单通过')
               break
             case '6':
-              this.$set(result[index], 'stateName', '撤销驳回')
+              this.$set(result[index], 'stateName', '撤单驳回')
               break
             case '7':
               this.$set(result[index], 'stateName', '作废')
@@ -257,6 +274,30 @@ export default {
         this.systemList = res.data.data
       })
     },
+    bindDeptId(id) {
+      this.queryInfo.deptId = id
+      var url = '/ERP/selectEmplyee?symbol=2&duty=' + id
+      loadPerson(url).then(res => {
+        this.personList = res.data.data
+      })
+      this.searchDataM()
+    },
+    bindYeWuId(id) {
+      this.queryInfo.faQiPersonId = id
+      this.searchDataM()
+    },
+    clearDeptSearchDataM() {
+      this.personList = ''
+      this.queryInfo.faQiPerson = ''
+      this.queryInfo.faQiPersonId = ''
+      this.queryInfo.deptId = ''
+      this.searchDataM()
+    },
+    clearPersonData() {
+      this.queryInfo.faQiPerson = ''
+      this.queryInfo.faQiPersonId = ''
+      this.searchDataM()
+    },
     searchDataM() {
       if (this.queryInfo.systemName === '') {
         this.$set(this.queryInfo, 'systemId', '')
@@ -272,7 +313,7 @@ export default {
       window.console.log(this.queryInfo, 'test')
       this.pageSetting.current = 1
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
-      var url = '/api/Approve?state=0&employeeId=10001&approveState=0&'
+      var url = '/api/Approve?state=0&approveState=0&'
       var urlParam = toUrlParam(url, searchInfo)
       this.listLoading = true
       searchData(urlParam).then(res => {
@@ -280,25 +321,29 @@ export default {
         result.map((item, index) => {
           switch (item.approveState) {
             case '0':
-              this.$set(result[index], 'stateName', '待审批')
+              if (item.style === '撤单') {
+                this.$set(result[index], 'stateName', '待撤单')
+              } else {
+                this.$set(result[index], 'stateName', '待审批')
+              }
               break
             case '1':
               this.$set(result[index], 'stateName', '审批通过')
               break
             case '2':
-              this.$set(result[index], 'stateName', '审批驳回')
+              this.$set(result[index], 'stateName', '驳回')
               break
             case '3':
               this.$set(result[index], 'stateName', '待撤单')
               break
             case '4':
-              this.$set(result[index], 'stateName', '审批取消')
+              this.$set(result[index], 'stateName', '取消')
               break
             case '5':
-              this.$set(result[index], 'stateName', '撤销通过')
+              this.$set(result[index], 'stateName', '撤单通过')
               break
             case '6':
-              this.$set(result[index], 'stateName', '撤销驳回')
+              this.$set(result[index], 'stateName', '撤单驳回')
               break
             case '7':
               this.$set(result[index], 'stateName', '作废')
@@ -311,7 +356,17 @@ export default {
       })
     },
     showDataM(data) {
-      this.$router.push({ path: '/审批管理/审批详情', query: { data: data.url }})
+      if (data.style === '撤单') {
+        // var rightpart = data.url.split('?')[1]
+        // rightpart = rightpart.split('=')
+        if (data.approveState === '0') {
+          this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, queryInfo: this.queryInfo, employeeName: data.employeeName, pkNo: data.pkNo, url: data.url, specialFlag: 1, show: true }})
+        } else {
+          this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, queryInfo: this.queryInfo, employeeName: data.employeeName, pkNo: data.pkNo, url: data.url, specialFlag: 0 }})
+        }
+      } else {
+        this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, queryInfo: this.queryInfo, employeeName: data.employeeName, pkNo: data.pkNo, url: data.url, specialFlag: 0, show: true }})
+      }
     },
     bindDanJuId(id) {
       this.$set(this.queryInfo, 'classifyId', id)
@@ -322,7 +377,7 @@ export default {
       this.$set(this.queryInfo, 'classifyName', '')
       this.$set(this.queryInfo, 'classifyId', '')
       window.console.log(this.queryInfo)
-      var param1 = '/api/ApproveSystem/?size=-1&flag=2&systemId=' + id
+      var param1 = '/api/ApproveSystem/?size=-1&flag=2&parentId=' + id
       loadData(param1).then(res => {
         this.danJuList = res.data.data
       })
@@ -372,6 +427,11 @@ export default {
       this.$set(this.queryInfo, 'employeeId', '')
       this.$set(this.queryInfo, 'systemId', '')
       this.$set(this.queryInfo, 'classifyId', '')
+      this.$set(this.queryInfo, 'deptId', '')
+      this.$set(this.queryInfo, 'deptName', '')
+      this.deptList = ''
+      this.personList = ''
+
       this.initData()
     },
     handleCurrentChange(val) {
@@ -388,6 +448,8 @@ export default {
     },
     searchSpecialDataM() {
       this.$set(this.queryInfo, 'stateN', '-4')
+              this.$set(this.queryInfo, 'style_1', '')
+        this.$set(this.queryInfo, 'style', '')
       this.searchDataM()
     },
     stateChange(name) {

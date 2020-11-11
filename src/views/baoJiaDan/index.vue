@@ -339,7 +339,7 @@ export default {
         if (res.data.code !== 1) {
           this.$message.error(res.data.tipInfo)
         } else {
-          this.$message.success('审批取消成功')
+          this.$message.success('取消成功')
           this.initData()
         }
       })

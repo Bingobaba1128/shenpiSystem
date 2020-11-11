@@ -117,10 +117,10 @@
         <el-table-column label="审批单号" prop="approveNo" show-overflow-tooltip />
         <el-table-column label="系统分类" prop="systemName" show-overflow-tooltip />
         <el-table-column label="单据分类" prop="classifyName" show-overflow-tooltip />
-        <el-table-column label="系统单号" prop="pkNo" show-overflow-tooltip />
+        <el-table-column label="系统单号" prop="realPkNo" show-overflow-tooltip />
         <el-table-column label="标题" prop="biaoTi" show-overflow-tooltip />
         <el-table-column label="单据状态" prop="stateName" show-overflow-tooltip />
-        <el-table-column label="驳回原因" prop="remark" show-overflow-tooltip />
+        <!-- <el-table-column label="驳回原因" prop="remark" show-overflow-tooltip /> -->
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
             <el-button type="text" @click="showDataM(scope.row)">查看</el-button>
@@ -160,6 +160,8 @@ export default {
     return {
       approveContentlist: [],
       initAllData: '',
+      name: sessionStorage.getItem('employeeName'),
+      id: sessionStorage.getItem('employeeId'),
       queryInfo: {
         faQiTime: this.getInitDate(),
         approveTime: this.getInitDate(),
@@ -169,12 +171,12 @@ export default {
         stateName: '',
         search: '',
         faQiPersonId: '',
-        employeeId: '',
         systemId: '',
         classifyId: '',
         style_1: '',
         style: '',
-        approveState: ''
+        approveState: '',
+        employeeId: sessionStorage.getItem('employeeId')
 
       },
       pageSetting: {
@@ -191,7 +193,7 @@ export default {
         { name: '审批通过', id: '1' },
         { name: '驳回', id: '2' },
         { name: '撤单通过', id: '5' },
-        { name: '撤单驳会', id: '6' },
+        { name: '撤单驳回', id: '6' },
         { name: '作废', id: '7' }
       ]
     }
@@ -201,7 +203,10 @@ export default {
   },
   methods: {
     initData() {
-      var url = '/api/Approve?state=-2&employeeId=10001&'
+      var url = '/api/Approve?state=-2&'
+                            if (JSON.parse(sessionStorage.getItem('tabParam'))) {
+      this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
+    }
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
 
       var urlParam = toUrlParam(url, searchInfo)
@@ -218,19 +223,19 @@ export default {
               this.$set(result[index], 'stateName', '审批通过')
               break
             case '2':
-              this.$set(result[index], 'stateName', '审批驳回')
+              this.$set(result[index], 'stateName', '驳回')
               break
             case '3':
               this.$set(result[index], 'stateName', '待撤单')
               break
             case '4':
-              this.$set(result[index], 'stateName', '审批取消')
+              this.$set(result[index], 'stateName', '取消')
               break
             case '5':
-              this.$set(result[index], 'stateName', '撤销通过')
+              this.$set(result[index], 'stateName', '撤单通过')
               break
             case '6':
-              this.$set(result[index], 'stateName', '撤销驳回')
+              this.$set(result[index], 'stateName', '撤单驳回')
               break
             case '7':
               this.$set(result[index], 'stateName', '作废')
@@ -264,7 +269,7 @@ export default {
       window.console.log(this.queryInfo, 'test')
       this.pageSetting.current = 1
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
-      var url = '/api/Approve?state=-2&employeeId=10001&'
+      var url = '/api/Approve?state=-2&'
       var urlParam = toUrlParam(url, searchInfo)
       this.listLoading = true
       searchData(urlParam).then(res => {
@@ -278,19 +283,19 @@ export default {
               this.$set(result[index], 'stateName', '审批通过')
               break
             case '2':
-              this.$set(result[index], 'stateName', '审批驳回')
+              this.$set(result[index], 'stateName', '驳回')
               break
             case '3':
               this.$set(result[index], 'stateName', '待撤单')
               break
             case '4':
-              this.$set(result[index], 'stateName', '审批取消')
+              this.$set(result[index], 'stateName', '取消')
               break
             case '5':
-              this.$set(result[index], 'stateName', '撤销通过')
+              this.$set(result[index], 'stateName', '撤单通过')
               break
             case '6':
-              this.$set(result[index], 'stateName', '撤销驳回')
+              this.$set(result[index], 'stateName', '撤单驳回')
               break
             case '7':
               this.$set(result[index], 'stateName', '作废')
@@ -303,7 +308,7 @@ export default {
       })
     },
     showDataM(data) {
-      window.open(data.url)
+      this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, queryInfo: this.queryInfo, employeeName: data.employeeName, flagSpecial: 1, approveNo: data.approveNo, url: data.url, currentTab: 'child3' }})
     },
     bindDanJuId(id) {
       this.$set(this.queryInfo, 'classifyId', id)
@@ -314,7 +319,7 @@ export default {
       this.$set(this.queryInfo, 'classifyName', '')
       this.$set(this.queryInfo, 'classifyId', '')
       window.console.log(this.queryInfo)
-      var param1 = '/api/ApproveSystem/?size=-1&flag=2&systemId=' + id
+      var param1 = '/api/ApproveSystem/?size=-1&flag=2&parentId=' + id
       loadData(param1).then(res => {
         this.danJuList = res.data.data
       })
