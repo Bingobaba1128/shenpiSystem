@@ -153,8 +153,8 @@ export default {
     refreshSelectedTag() {
       // this.$emit('refresh', true)
       this.reloadPage()
-                  sessionStorage.removeItem('tabParam')
-                  sessionStorage.removeItem('currentTag')
+      sessionStorage.removeItem('tabParam')
+      sessionStorage.removeItem('currentTag')
 
       // window.location.reload()
       // this.$router.push(this.selectedTag)
@@ -170,8 +170,8 @@ export default {
       // })
     },
     closeSelectedTag(view) {
-                  sessionStorage.removeItem('tabParam')
-                  sessionStorage.removeItem('currentTag')
+      sessionStorage.removeItem('tabParam')
+      sessionStorage.removeItem('currentTag')
 
       this.$store.dispatch('toolbar/delView', view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
@@ -187,8 +187,8 @@ export default {
       })
     },
     closeAllTags(view) {
-                  sessionStorage.removeItem('tabParam')
-                  sessionStorage.removeItem('currentTag')
+      sessionStorage.removeItem('tabParam')
+      sessionStorage.removeItem('currentTag')
 
       this.$store.dispatch('toolbar/delAllViews').then(({ visitedViews }) => {
         if (this.affixTags.some(tag => tag.path === view.path)) {

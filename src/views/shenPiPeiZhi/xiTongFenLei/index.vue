@@ -45,8 +45,8 @@
       >
         <el-table-column type="index" label="序号" width="100" fixed="left" />
         <el-table-column label="系统分类" prop="name" width="400" show-overflow-tooltip />
-        <el-table-column label="创建人" prop="operator" show-overflow-tooltip />
-        <el-table-column label="创建时间" prop="operateDate" show-overflow-tooltip />
+        <el-table-column label="创建人" prop="recordMan" show-overflow-tooltip />
+        <el-table-column label="创建时间" prop="recordTime" show-overflow-tooltip />
 
         <el-table-column label="操作" fixed="right" width="250">
           <template slot-scope="scope">

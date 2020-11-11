@@ -204,7 +204,7 @@ export default {
       systemList: [],
       readOrNot: [
         { name: '已读', id: '-6' },
-        { name: '未读', id: '-5' },
+        { name: '未读', id: '-5' }
       ],
       stateList: [
         { name: '审批通过', id: '1' },
@@ -221,9 +221,9 @@ export default {
   methods: {
     initData() {
       var url = '/api/Approve?'
-                            if (JSON.parse(sessionStorage.getItem('tabParam'))) {
-      this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
-    }
+      if (JSON.parse(sessionStorage.getItem('tabParam'))) {
+        this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
+      }
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
 
       var urlParam = toUrlParam(url, searchInfo)

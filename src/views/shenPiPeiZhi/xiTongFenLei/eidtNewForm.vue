@@ -29,7 +29,7 @@ export default {
       queryInfo: {
         name: this.param.name,
         flag: 1,
-        operator: '邓科',
+        recordMan: '邓科',
         id: this.param.id,
         parentId: '0'
       },

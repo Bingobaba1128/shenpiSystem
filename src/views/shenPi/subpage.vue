@@ -174,8 +174,8 @@ export default {
   created() {
     this.initData()
     window.console.log(this.$route.query.pk)
-        sessionStorage.removeItem('tabParam')
-        sessionStorage.removeItem('currentTag')
+    sessionStorage.removeItem('tabParam')
+    sessionStorage.removeItem('currentTag')
   },
 
   mounted() {

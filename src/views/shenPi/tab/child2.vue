@@ -149,7 +149,7 @@
         <el-table-column label="系统单号" prop="realPkNo" show-overflow-tooltip />
         <el-table-column label="标题" prop="biaoTi" show-overflow-tooltip />
         <el-table-column label="申请人" prop="faQiPerson" show-overflow-tooltip />
-                <el-table-column label="操作状态" prop="currentState" show-overflow-tooltip />
+        <el-table-column label="操作状态" prop="currentState" show-overflow-tooltip />
 
         <el-table-column label="单据状态" prop="stateName" show-overflow-tooltip />
         <el-table-column label="操作" fixed="right">
@@ -242,9 +242,9 @@ export default {
         this.deptList = res.data.data
       })
       var url = '/api/Approve?'
-                      if (JSON.parse(sessionStorage.getItem('tabParam'))) {
-      this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
-    }
+      if (JSON.parse(sessionStorage.getItem('tabParam'))) {
+        this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
+      }
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
 
       var urlParam = toUrlParam(url, searchInfo)
@@ -365,7 +365,7 @@ export default {
               this.$set(result[index], 'stateName', '作废')
               break
           }
-                    switch (item.state) {
+          switch (item.state) {
             case '0':
               this.$set(result[index], 'currentState', '待审批')
               break

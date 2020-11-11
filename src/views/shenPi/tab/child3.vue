@@ -204,9 +204,9 @@ export default {
   methods: {
     initData() {
       var url = '/api/Approve?state=-2&'
-                            if (JSON.parse(sessionStorage.getItem('tabParam'))) {
-      this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
-    }
+      if (JSON.parse(sessionStorage.getItem('tabParam'))) {
+        this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
+      }
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
 
       var urlParam = toUrlParam(url, searchInfo)

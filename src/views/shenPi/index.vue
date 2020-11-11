@@ -49,13 +49,13 @@ export default {
     }
     window.console.log(this.activeName, 'currensgyugsayu')
   },
-//   destroyed() {
-//                   sessionStorage.removeItem('currentTag')
+  //   destroyed() {
+  //                   sessionStorage.removeItem('currentTag')
 
-// },
+  // },
   methods: {
     handleClick() {
-            sessionStorage.removeItem('tabParam')
+      sessionStorage.removeItem('tabParam')
 
       this.$set(this.currentTab, 'currentTabComponent', this.activeName)
 

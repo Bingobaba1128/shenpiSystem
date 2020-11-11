@@ -3,21 +3,21 @@
     <cardTitile :param="titileName" :bclose="true" />
     <div class="content">
       <el-form :rules="rules" :model="queryInfo" label-width="321px" @submit.native.prevent>
-        <el-form-item label="费用分类" prop="classify">
-          <el-select v-model="queryInfo.classify" placeholder="请选择" clearable filterable>
+        <el-form-item label="系统名称" prop="systemName">
+          <el-select v-model="queryInfo.systemName" placeholder="请选择" clearable filterable>
             <el-option
               v-for="item in fenLeiList"
-              :key="item.classify"
-              :label="item.classify"
-              :value="item.classify"
+              :key="item.name"
+              :label="item.name"
+              :value="item.name"
               @click.native="bindId(item.id)"
             />
           </el-select>
         </el-form-item>
       </el-form>
       <el-form :rules="rules" :model="queryInfo" label-width="321px" style="border-top:none" @submit.native.prevent>
-        <el-form-item label="费用类型" prop="style">
-          <el-input v-model.trim="queryInfo.style" placeholder="请输入" maxlength="100" clearable />
+        <el-form-item label="单据名称" prop="name">
+          <el-input v-model.trim="queryInfo.name" placeholder="请输入" maxlength="100" clearable />
         </el-form-item>
       </el-form>
 
@@ -30,7 +30,7 @@
   </div>
 </template>
 <script>
-import { addData, loadData } from '@/api/feiyongleixing'
+import { addData, loadData } from '@/api/shenPiPeiZhi'
 import cardTitile from '@/layout/mixin/cardTitile'
 
 export default {
@@ -41,19 +41,20 @@ export default {
   data() {
     return {
       queryInfo: {
-        style: '',
-        classify: '',
-        classifyId: '',
-        operator: '邓科'
+        parentId: '',
+        flag: 2,
+        recordMan: '邓科',
+        systemName: '',
+        name: ''
       },
-      titileName: '费用类型（新增）',
+      titileName: '单据分类（新增）',
       fenLeiList: [],
       rules: {
-        style: [
-          { required: true, message: '请填写费用分类', trigger: 'blur' }
+        name: [
+          { required: true, message: '请填写系统名称', trigger: 'blur' }
         ],
-        classify: [
-          { required: true, message: '请填写费用类型', trigger: 'change' }
+        systemName: [
+          { required: true, message: '请填写单据名称', trigger: 'change' }
         ]
       }
     }
@@ -63,16 +64,16 @@ export default {
   },
   methods: {
     initBaseData() {
-      var urlParam = '/api/FeeManagement/getDistinctClassification?size=-1'
+      var urlParam = '/api/ApproveSystem?flag=1'
       loadData(urlParam).then(res => {
         this.fenLeiList = res.data.data
       })
     },
     saveToServe() {
-      if (this.queryInfo.classify === '') {
-        this.$message.error('请填写费用分类')
-      } else if (this.queryInfo.style === '') {
-        this.$message.error('请填写费用类型')
+      if (this.queryInfo.parentId === '') {
+        this.$message.error('请选择系统名称')
+      } else if (this.queryInfo.name === '') {
+        this.$message.error('请填写单据名称')
       } else {
         addData(this.queryInfo).then(res => {
           if (res.data.code !== 1) {
@@ -85,10 +86,10 @@ export default {
       }
     },
     addMore() {
-      if (this.queryInfo.classify === '') {
-        this.$message.error('请填写费用分类')
-      } else if (this.queryInfo.style === '') {
-        this.$message.error('请填写费用类型')
+      if (this.queryInfo.parentId === '') {
+        this.$message.error('请选择系统名称')
+      } else if (this.queryInfo.name === '') {
+        this.$message.error('请填写单据名称')
       } else {
         addData(this.queryInfo).then(res => {
           if (res.data.code !== 1) {
@@ -96,10 +97,11 @@ export default {
           } else {
             this.$message.success(res.data.tipInfo)
             this.queryInfo = {
-              style: '',
-              classify: '',
-              classifyId: '',
-              operator: '邓科'
+              parentId: '',
+              flag: 2,
+              recordMan: '邓科',
+              systemName: '',
+              name: ''
             }
           }
         })
@@ -109,7 +111,7 @@ export default {
       this.$emit('closeDialog2')
     },
     bindId(id) {
-      this.queryInfo.classifyId = id
+      this.queryInfo.parentId = id
     }
   }
 }

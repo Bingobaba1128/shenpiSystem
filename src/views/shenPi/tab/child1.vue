@@ -220,9 +220,9 @@ export default {
       })
 
       var url = '/api/Approve?state=0&approveState=0&'
-                            if (JSON.parse(sessionStorage.getItem('tabParam'))) {
-      this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
-    }
+      if (JSON.parse(sessionStorage.getItem('tabParam'))) {
+        this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
+      }
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
 
       var urlParam = toUrlParam(url, searchInfo)
@@ -448,8 +448,8 @@ export default {
     },
     searchSpecialDataM() {
       this.$set(this.queryInfo, 'stateN', '-4')
-              this.$set(this.queryInfo, 'style_1', '')
-        this.$set(this.queryInfo, 'style', '')
+      this.$set(this.queryInfo, 'style_1', '')
+      this.$set(this.queryInfo, 'style', '')
       this.searchDataM()
     },
     stateChange(name) {

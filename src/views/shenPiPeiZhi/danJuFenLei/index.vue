@@ -8,20 +8,29 @@
         <el-form :inline="true" :model="formInline" class="demo-form-inline" label-width="100px" @submit.native.prevent>
           <el-row>
             <el-col span="4.5">
-              <el-form-item label="费用分类 :" label-width="90px">
-                <el-select v-model="queryInfo.classify" placeholder="全部" clearable filterable @change="searchData">
+              <el-form-item label="系统名称 :" label-width="90px">
+                <el-select v-model="queryInfo.systemName" placeholder="全部" clearable filterable @clear="clearData1">
                   <el-option
                     v-for="item in fenLeiList"
-                    :key="item.classify"
-                    :label="item.classify"
-                    :value="item.classify"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                    @click.native="bindSyetemId(item)"
                   />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col span="4.5">
-              <el-form-item label="费用类型 :" label-width="90px">
-                <el-input v-model.trim="queryInfo.style" placeholder="" clearable maxlength="100" @keyup.enter.native="searchData" />
+              <el-form-item label="单据名称 :" label-width="90px">
+                <!-- <el-input v-model.trim="queryInfo.style" placeholder="" clearable maxlength="100" @keyup.enter.native="searchData" /> -->
+                <el-select v-model="queryInfo.name" placeholder="全部" clearable filterable @change="searchData" @clear="clearData2">
+                  <el-option
+                    v-for="item in nameList"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col span="4" class="function" style="display:flex;margin-right:auto">
@@ -56,15 +65,15 @@
         :header-cell-style="{background:'#eef1f6',color:'#606266'}"
       >
         <el-table-column type="index" label="序号" width="100" fixed="left" />
-        <el-table-column label="费用分类" prop="classify" width="400" show-overflow-tooltip />
-        <el-table-column label="费用类型" prop="style" show-overflow-tooltip />
-        <el-table-column label="创建人" prop="operator" show-overflow-tooltip />
-        <el-table-column label="创建时间" prop="operateDate" show-overflow-tooltip />
+        <el-table-column label="系统名称" prop="parentName" width="400" show-overflow-tooltip />
+        <el-table-column label="单据名称" prop="name" show-overflow-tooltip />
+        <el-table-column label="创建人" prop="recordMan" show-overflow-tooltip />
+        <el-table-column label="创建时间" prop="recordTime" show-overflow-tooltip />
 
         <el-table-column label="操作" fixed="right" width="250">
           <template slot-scope="scope">
             <el-button type="text" @click="editDataM(scope.row)">修改</el-button>
-            <el-button type="text" style="color:#FAAB15" @click="deleteData(scope.row.id,scope.row.classifyId)">删除</el-button>
+            <el-button type="text" style="color:#FAAB15" @click="deleteData(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
 
@@ -96,11 +105,11 @@
 <script>
 // import { baseUrl } from '@/api/apiUrl'
 import { toUrlParam } from '@/utils/toUrlParam'
-import { loadData, searchData, deleteRecord } from '@/api/feiyongleixing'
+import { loadData, searchData, deleteRecord } from '@/api/shenPiPeiZhi'
 import { combineObject } from '@/utils/combineObject'
 
-import addNewForm from '@/views/jichupeizhi/feiyongleixing/addNewForm'
-import editForm from '@/views/jichupeizhi/feiyongleixing/eidtNewForm'
+import addNewForm from '@/views/shenPiPeiZhi/danJuFenLei/addNewForm'
+import editForm from '@/views/shenPiPeiZhi/danJuFenLei/eidtNewForm'
 import cardTitile from '@/layout/mixin/cardTitile'
 
 export default {
@@ -114,10 +123,11 @@ export default {
     return {
       initAllData: '',
       queryInfo: {
-        classify: '',
-        style: ''
+        parentId: '',
+        name: '',
+        systemName: ''
       },
-      titileName: '费用类型',
+      titileName: '单据分类',
       value: '',
       dialogAddTableVisible: false,
       dialogEditTableVisible: false,
@@ -131,7 +141,7 @@ export default {
       token: '',
       deleteItem: {
         id: '',
-        classifyId: ''
+        flag: '2'
       },
       specialPageSetting: {
         current: '',
@@ -141,7 +151,8 @@ export default {
       fuLiaoList: '',
       fenLeiList: [],
       leiXingList: [],
-      listLoading: true
+      listLoading: true,
+      nameList: []
     }
   },
 
@@ -153,7 +164,11 @@ export default {
 
     // 数据初始化
     initData() {
-      var url = '/api/FeeStyle?'
+      var url1 = '/api/ApproveSystem?flag=1'
+      loadData(url1).then(res => {
+        this.fenLeiList = res.data.data
+      })
+      var url = '/api/ApproveSystem?flag=2&'
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
       var urlParam = toUrlParam(url, searchInfo)
       this.listLoading = true
@@ -161,10 +176,6 @@ export default {
         this.listLoading = false
         this.totalSize = res.data.count
         this.initAllData = res.data.data
-      })
-      var url1 = '/api/FeeClassifaction?size=-1'
-      loadData(url1).then(res => {
-        this.fenLeiList = res.data.data
       })
     },
 
@@ -177,10 +188,22 @@ export default {
 
       this.initData(this.pageSetting)
     },
-
-    deleteData(id, classifyId) {
+    clearData1() {
+      this.$set(this.queryInfo, 'parentId', '')
+      this.$set(this.queryInfo, 'name', '')
+      this.nameList = []
+      this.searchData()
+    },
+    bindSyetemId(data) {
+      this.$set(this.queryInfo, 'parentId', data.id)
+      var url1 = '/api/ApproveSystem?flag=2&parentId=' + data.id
+      loadData(url1).then(res => {
+        this.nameList = res.data.data
+      })
+      this.searchData()
+    },
+    deleteData(id) {
       this.$set(this.deleteItem, 'id', id)
-      this.$set(this.deleteItem, 'classifyId', classifyId)
       var _self = this
       this.$utils.isdel(function() {
         deleteRecord(_self.deleteItem).then(res => {
@@ -200,7 +223,7 @@ export default {
     searchData() {
       this.pageSetting.current = 1
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
-      var url = '/api/FeeStyle?'
+      var url = '/api/ApproveSystem?flag=2&'
       var urlParam = toUrlParam(url, searchInfo)
       this.listLoading = true
       searchData(urlParam).then(res => {

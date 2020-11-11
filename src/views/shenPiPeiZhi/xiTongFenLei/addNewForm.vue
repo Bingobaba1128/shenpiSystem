@@ -29,7 +29,7 @@ export default {
       queryInfo: {
         name: '',
         flag: 1,
-        operator: '邓科',
+        recordMan: '邓科',
         parentId: '0'
       },
       titileName: '系统分类（新增）',
@@ -67,8 +67,8 @@ export default {
           } else {
             this.$message.success(res.data.tipInfo)
             this.queryInfo = {
-                      name: '',
-        flag: 1,
+              name: '',
+              flag: 1,
               operator: '邓科'
             }
           }

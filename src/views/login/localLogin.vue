@@ -33,7 +33,6 @@ export default {
         // sessionStorage.setItem('tabParam', '')
         sessionStorage.removeItem('tabParam')
         sessionStorage.removeItem('currentTag')
-
       })
     }
   }

@@ -7,14 +7,48 @@
         <el-form :inline="true" :model="formInline" class="demo-form-inline" label-width="100px" @submit.native.prevent>
           <el-row>
             <el-col span="4.5">
-              <el-form-item label="费用名称 :" label-width="90px">
-                <el-input v-model.trim="queryInfo.name" placeholder="" clearable maxlength="100" @keyup.enter.native="searchData" />
+              <el-form-item label="系统名称 :" label-width="90px">
+                <el-select v-model="queryInfo.parentName" placeholder="全部" clearable filterable @clear="clearData1">
+                  <el-option
+                    v-for="item in fenLeiList"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                    @click.native="bindSyetemId(item)"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col span="4.5">
+              <el-form-item label="单据名称 :" label-width="90px">
+                <el-select v-model="queryInfo.name" placeholder="全部" clearable filterable @clear="clearData2">
+                  <el-option
+                    v-for="item in nameList"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                    @click.native="bindModuleId(item.id)"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col span="4.5">
+              <el-form-item label="类型 :" label-width="90px">
+                <el-select v-model="queryInfo.flagName" placeholder="全部" clearable filterable @change="searchData" @clear="clearData3">
+                  <el-option
+                    v-for="item in stateList"
+                    :key="item.name"
+                    :label="item.name"
+                    :value="item.name"
+                    @click.native="bindFlag(item.value)"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col span="4" class="function" style="display:flex;margin-right:auto">
               <el-button class="indexButton" icon="el-icon-search" @click="searchData">查询</el-button>
             </el-col>
-            <el-col span="8" style="float:right;display:flex;justify-content: flex-end" class="function">
+            <el-col span="4" style="float:right;display:flex;justify-content: flex-end" class="function">
               <el-button class="indexButton" @click="addNewRecord">新增</el-button>
             </el-col>
           </el-row>
@@ -39,17 +73,23 @@
         element-loading-text="努力加载中..."
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(255,255, 255, 0.9)"
-        empty-text=" "
+        empty-text="请先添加筛选条件"
         :header-cell-style="{background:'#eef1f6',color:'#606266'}"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="index" label="序号" width="100" fixed="left" />
-        <el-table-column label="费用分类" prop="classify" show-overflow-tooltip />
-        <el-table-column label="费用类型" prop="style" show-overflow-tooltip />
-        <el-table-column label="费用名称" prop="name" show-overflow-tooltip />
-        <el-table-column label="单价（元/含税）" prop="price" show-overflow-tooltip />
-        <el-table-column label="创建人" prop="operator" show-overflow-tooltip />
-        <el-table-column label="创建时间" prop="operateDate" show-overflow-tooltip />
+        <el-table-column label="系统名称" prop="systemName" show-overflow-tooltip />
+        <el-table-column label="单据名称" prop="approveStyleName" show-overflow-tooltip />
+        <el-table-column label="类型" prop="flag" show-overflow-tooltip>
+          <template slot-scope="scope">
+
+            <span>{{ formatStatus(scope.row.flag) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="审批顺序" prop="orderNo" show-overflow-tooltip />
+
+        <el-table-column label="备注" prop="remark" show-overflow-tooltip />
+        <el-table-column label="审批人" prop="employeeName" show-overflow-tooltip />
 
         <el-table-column label="操作" fixed="right" width="250">
           <template slot-scope="scope">
@@ -83,13 +123,12 @@
 </template>
 
 <script>
-// import { baseUrl } from '@/api/apiUrl'
 import { toUrlParam } from '@/utils/toUrlParam'
-import { loadData, loadFuLiaoLeiXingData, searchData, deleteRecord } from '@/api/feiyongguanli'
+import { loadData, searchData, deleteRecord } from '@/api/shenPiPeiZhi'
 import { combineObject } from '@/utils/combineObject'
 
-import addNewForm from '@/views/jichupeizhi/feiyongguanli/addNewForm'
-import editForm from '@/views/jichupeizhi/feiyongguanli/eidtNewForm'
+import addNewForm from '@/views/shenPiPeiZhi/liuChengPeiZhi/addNewForm'
+import editForm from '@/views/shenPiPeiZhi/liuChengPeiZhi/eidtNewForm'
 import cardTitile from '@/layout/mixin/cardTitile'
 
 export default {
@@ -103,9 +142,14 @@ export default {
     return {
       initAllData: '',
       queryInfo: {
-        name: ''
+        systemId: '',
+        name: '',
+        systemName: '',
+        flag: '',
+        classifyId: ''
+
       },
-      titileName: '费用管理',
+      titileName: '审批流程配置',
       value: '',
       dialogAddTableVisible: false,
       dialogEditTableVisible: false,
@@ -115,6 +159,12 @@ export default {
         current: 1,
         size: 10
       },
+      stateList: [
+        { name: '审批', value: 0 },
+        { name: '撤单', value: 1 },
+        { name: '抄送', value: 2 }
+      ],
+
       token: '',
       deleteItem: {
         id: '',
@@ -126,36 +176,40 @@ export default {
       },
       current: 1,
       editParam: '',
-      fuLiaoList: '',
+      fenLeiList: '',
       multipleSelection: [],
-      listLoading: true
+      listLoading: true,
+      nameList: []
 
     }
   },
 
   created() {
     this.initData()
-    this.loadFuLiaoList()
+    this.loadBaseList()
   },
 
   methods: {
 
-    loadFuLiaoList() {
-      loadFuLiaoLeiXingData().then(res => {
-        this.fuLiaoList = res.data.data
+    loadBaseList() {
+      var url1 = '/api/ApproveSystem?flag=1'
+      loadData(url1).then(res => {
+        this.fenLeiList = res.data.data
       })
     },
     // 数据初始化
     initData() {
-      var url = '/api/FeeManagement?'
-      var searchInfo = combineObject(this.queryInfo, this.pageSetting)
-      var urlParam = toUrlParam(url, searchInfo)
-      this.listLoading = true
-      loadData(urlParam).then(res => {
-        this.listLoading = false
-        this.totalSize = res.data.count
-        this.initAllData = res.data.data
-      })
+      this.listLoading = false
+      this.initAllData = []
+      // var url = '/api/FeeManagement?'
+      // var searchInfo = combineObject(this.queryInfo, this.pageSetting)
+      // var urlParam = toUrlParam(url, searchInfo)
+      // this.listLoading = true
+      // loadData(urlParam).then(res => {
+      //   this.listLoading = false
+      //   this.totalSize = res.data.count
+      //   this.initAllData = res.data.data
+      // })
     },
     addNewRecord() {
       this.dialogAddTableVisible = true
@@ -165,6 +219,52 @@ export default {
       this.dialogEditTableVisible = false
 
       this.initData(this.pageSetting)
+    },
+    clearData1() {
+      this.$set(this.queryInfo, 'systemId', '')
+      this.$set(this.queryInfo, 'name', '')
+      this.$set(this.queryInfo, 'classifyId', '')
+      this.nameList = []
+      this.searchData()
+    },
+    clearData2() {
+      this.$set(this.queryInfo, 'classifyId', '')
+      this.searchData()
+    },
+    clearData3() {
+      this.$set(this.queryInfo, 'flag', '')
+      this.searchData()
+    },
+    formatStatus(state) {
+      switch (state) {
+        case '0':
+          return '审批'
+          break
+        case '1':
+          return '撤单'
+          break
+        case '2':
+          return '抄送'
+          break
+      }
+    },
+    bindFlag(flag) {
+      this.$set(this.queryInfo, 'flag', flag)
+      this.searchData()
+    },
+    bindSyetemId(data) {
+      this.$set(this.queryInfo, 'systemId', data.id)
+      this.$set(this.queryInfo, 'classifyId', '')
+      this.$set(this.queryInfo, 'name', '')
+      var url1 = '/api/ApproveSystem?flag=2&parentId=' + data.id
+      loadData(url1).then(res => {
+        this.nameList = res.data.data
+      })
+      this.searchData()
+    },
+    bindModuleId(id) {
+      this.$set(this.queryInfo, 'classifyId', id)
+      this.searchData()
     },
     deleteData(id, styleId) {
       this.$set(this.deleteItem, 'id', id)
@@ -187,16 +287,20 @@ export default {
       this.dialogEditTableVisible = true
     },
     searchData() {
-      this.pageSetting.current = 1
-      var searchInfo = combineObject(this.queryInfo, this.pageSetting)
-      var url = '/api/FeeManagement?'
-      var urlParam = toUrlParam(url, searchInfo)
-      this.listLoading = true
-      searchData(urlParam).then(res => {
-        this.listLoading = false
-        this.totalSize = res.data.count
-        this.initAllData = res.data.data
-      })
+      if (this.queryInfo.systemId === '' && this.queryInfo.classifyId === '' && this.queryInfo.flag === '') {
+        this.initAllData = []
+      } else {
+        this.pageSetting.current = 1
+        var searchInfo = combineObject(this.queryInfo, this.pageSetting)
+        var url = '/api/ApproveConfig?'
+        var urlParam = toUrlParam(url, searchInfo)
+        this.listLoading = true
+        searchData(urlParam).then(res => {
+          this.listLoading = false
+          this.totalSize = res.data.count
+          this.initAllData = res.data.data
+        })
+      }
     },
     handleCurrentChange(val) {
       this.pageSetting.current = val
