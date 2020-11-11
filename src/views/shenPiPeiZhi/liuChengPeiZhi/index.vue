@@ -124,7 +124,7 @@
 
 <script>
 import { toUrlParam } from '@/utils/toUrlParam'
-import { loadData, searchData, deleteRecord } from '@/api/shenPiPeiZhi'
+import { loadData, searchData, deleteRecordConfig } from '@/api/shenPiPeiZhi'
 import { combineObject } from '@/utils/combineObject'
 
 import addNewForm from '@/views/shenPiPeiZhi/liuChengPeiZhi/addNewForm'
@@ -168,7 +168,6 @@ export default {
       token: '',
       deleteItem: {
         id: '',
-        styleId: ''
       },
       specialPageSetting: {
         current: '',
@@ -218,7 +217,7 @@ export default {
       this.dialogAddTableVisible = false
       this.dialogEditTableVisible = false
 
-      this.initData(this.pageSetting)
+      this.searchData()
     },
     clearData1() {
       this.$set(this.queryInfo, 'systemId', '')
@@ -268,16 +267,15 @@ export default {
     },
     deleteData(id, styleId) {
       this.$set(this.deleteItem, 'id', id)
-      this.$set(this.deleteItem, 'styleId', styleId)
 
       var _self = this
       this.$utils.isdel(function() {
-        deleteRecord(_self.deleteItem).then(res => {
+        deleteRecordConfig(_self.deleteItem).then(res => {
           if (res.data.code !== 1) {
             _self.$message.error(res.data.tipInfo)
           } else {
             _self.$message.success(res.data.tipInfo)
-            _self.initData()
+            _self.searchData()
           }
         })
       })
@@ -302,18 +300,33 @@ export default {
         })
       }
     },
+        searchData1() {
+      if (this.queryInfo.systemId === '' && this.queryInfo.classifyId === '' && this.queryInfo.flag === '') {
+        this.initAllData = []
+      } else {
+        var searchInfo = combineObject(this.queryInfo, this.pageSetting)
+        var url = '/api/ApproveConfig?'
+        var urlParam = toUrlParam(url, searchInfo)
+        this.listLoading = true
+        searchData(urlParam).then(res => {
+          this.listLoading = false
+          this.totalSize = res.data.count
+          this.initAllData = res.data.data
+        })
+      }
+    },
     handleCurrentChange(val) {
       this.pageSetting.current = val
-      this.initData()
+      this.searchData1()
     },
     handleSizeChange(val) {
       this.pageSetting.size = val
-      this.initData()
+      this.searchData()
     },
     closeDialog2() {
       this.dialogAddTableVisible = false
       this.dialogEditTableVisible = false
-      this.initData()
+      this.searchData()
     },
     pageCurrentChange() {
       if (this.current < 1) {
@@ -325,7 +338,7 @@ export default {
     },
     pageGo() {
       this.pageSetting.current = this.current
-      this.initData()
+      this.searchData()
     }
   }
 }
