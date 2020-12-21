@@ -42,6 +42,7 @@ export default {
     }
   },
   created() {
+    this.test()
     if (JSON.parse(sessionStorage.getItem('currentTag'))) {
       window.console.log('hereesasasasasa')
       this.activeName = JSON.parse(sessionStorage.getItem('currentTag'))
@@ -54,6 +55,24 @@ export default {
 
   // },
   methods: {
+        test() {
+      // window.parent.postMessage({type: 'childStatus', data: 'isReady'}, '*')
+      window.addEventListener('message', function(evt) {
+        const msg = evt.data.data
+        // if (msg.type !== token) { return }
+        sessionStorage.removeItem('currentTag')
+
+        sessionStorage.setItem('access_token', msg.access_token)
+        sessionStorage.setItem('employeeId', msg.employeeId)
+        sessionStorage.setItem('employeeName', msg.employeeName)
+        sessionStorage.setItem('contractBody', msg.contractBody)
+        sessionStorage.setItem('currentTag', msg.currentTag)
+        // sessionStorage.setItem('currentTag', '')
+        // sessionStorage.setItem('tabParam', '')
+        sessionStorage.removeItem('tabParam')
+        // sessionStorage.removeItem('currentTag')
+      })
+    },
     handleClick() {
       sessionStorage.removeItem('tabParam')
 

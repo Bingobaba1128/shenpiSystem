@@ -103,7 +103,7 @@ export default {
   methods: {
     initData(pageSetting) {
       this.listLoading = true
-      var url = '/api/Contract?address_1=1&'
+      var url = '/api/Contract?address_1=1&state=1_6&'
       var urlParam = toUrlParam(url, pageSetting)
       loadData(urlParam).then(res => {
         this.listLoading = false

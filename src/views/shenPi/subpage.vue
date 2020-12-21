@@ -92,7 +92,8 @@
         scrolling="auto"
         @load="deliverToken"
       />
-      <el-card v-if="flag === 1 && showable " style="margin:16px;margin-top:0 !important;height:70px" class="footer">
+      <!-- {{flag}} -->
+      <el-card v-if="flag === 1 && showable" style="margin:16px;margin-top:0 !important;height:70px" class="footer">
         <div style="padding: 16px; display:flex; justify-content:left">
           <el-button class="specialConfirmBtn" style="width:auto" @click="passThrough"> 通过</el-button>
           <el-button class="specialContinueBtn" style="background-color:#FAAB15;color:white;margin-left:40px;border:none;width:auto" @click="passBack">驳回</el-button>
@@ -236,21 +237,22 @@ export default {
         this.listNOrigin.map((item, index) => {
           switch (item.approveState) {
             case '-2':
-              if (index === 0) {
+              // if (index === 0) {
                 this.$set(this.listNOrigin[index], 'icon', this.icon0)
                 this.$set(this.listNOrigin[index], 'title', '已提交')
                 this.$set(this.listNOrigin[index], 'personTitle', '提交人')
                 this.$set(this.listNOrigin[index], 'dateTitle', '提交时间')
                 this.$set(this.listNOrigin[index], 'remarkTitle', '备注')
                 break
-              } else {
-                this.$set(this.listNOrigin[index], 'icon', this.icon0)
-                this.$set(this.listNOrigin[index], 'title', '待撤单')
-                this.$set(this.listNOrigin[index], 'personTitle', '审批人')
-                this.$set(this.listNOrigin[index], 'dateTitle', '审批时间')
-                this.$set(this.listNOrigin[index], 'remarkTitle', '备注')
-                break
-              }
+              // } 
+              // else {
+              //   this.$set(this.listNOrigin[index], 'icon', this.icon0)
+              //   this.$set(this.listNOrigin[index], 'title', '待撤单')
+              //   this.$set(this.listNOrigin[index], 'personTitle', '审批人')
+              //   this.$set(this.listNOrigin[index], 'dateTitle', '审批时间')
+              //   this.$set(this.listNOrigin[index], 'remarkTitle', '备注')
+              //   break
+              // }
 
             case '1':
               this.$set(this.listNOrigin[index], 'icon', this.icon0)
@@ -422,21 +424,20 @@ export default {
           this.listSOrigin.map((item, index) => {
             switch (item.approveState) {
               case '-2':
-                if (index == 0) {
                   this.$set(this.listSOrigin[index], 'icon', this.icon0)
                   this.$set(this.listSOrigin[index], 'title', '已提交')
                   this.$set(this.listSOrigin[index], 'personTitle', '提交人')
                   this.$set(this.listSOrigin[index], 'dateTitle', '提交时间')
                   this.$set(this.listSOrigin[index], 'remarkTitle', '备注')
                   break
-                } else {
-                  this.$set(this.listSOrigin[index], 'icon', this.icon0)
-                  this.$set(this.listSOrigin[index], 'title', '待撤单')
-                  this.$set(this.listSOrigin[index], 'personTitle', '审批人')
-                  this.$set(this.listSOrigin[index], 'dateTitle', '审批时间')
-                  this.$set(this.listSOrigin[index], 'remarkTitle', '备注')
-                  break
-                }
+                // else {
+                //   this.$set(this.listSOrigin[index], 'icon', this.icon0)
+                //   this.$set(this.listSOrigin[index], 'title', '待撤单')
+                //   this.$set(this.listSOrigin[index], 'personTitle', '审批人')
+                //   this.$set(this.listSOrigin[index], 'dateTitle', '审批时间')
+                //   this.$set(this.listSOrigin[index], 'remarkTitle', '备注')
+                //   break
+                // }
 
               case '1':
                 this.$set(this.listSOrigin[index], 'icon', this.icon0)
@@ -498,6 +499,9 @@ export default {
           })
 
           this.listS = JSON.parse(JSON.stringify(this.listSOrigin))
+                        //test
+
+          // this.listS = this.listS.concat(this.listS)
           var len = this.listS.length
           window.console.log(len, 'length')
           // var testPoint = this.approveState
@@ -522,6 +526,8 @@ export default {
               window.console.log(this.listNOrigin, 'listN')
               window.console.log(this.listS, 'listsss')
               this.listS = this.listS.concat(this.listNOrigin)
+              //test
+              // this.listS = this.listS.concat(this.listNOrigin)
               window.console.log(this.listS)
             }
           }

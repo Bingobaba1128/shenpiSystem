@@ -75,8 +75,8 @@
 
     </div>
     <div class="footer">
-      <el-button class="jiChuConfirmBtn" @click="saveToServe"> 确认保存</el-button>
-      <el-button class="jiChuContinueBtn" style="margin-left:68px" @click="addMore">继续新增</el-button>
+      <el-button class="jiChuConfirmBtn" @click="saveToServe"> 保存</el-button>
+      <!-- <el-button class="jiChuContinueBtn" style="margin-left:68px" @click="addMore">继续新增</el-button> -->
     </div>
 
   </div>
@@ -116,7 +116,7 @@ export default {
       nameList: [],
       deptList: [],
       personList: [],
-      titileName: '审批流程配置（新增）',
+      titileName: '审批流程配置（修改）',
       fenLeiList: [],
       LeiXingList: [],
       rules: {
@@ -180,7 +180,7 @@ export default {
     },
     saveToServe() {
       if (this.queryInfo.classify === '' || this.queryInfo.style === '') {
-        this.$message.error('请填写必填下')
+        this.$message.error('请填写必填项')
       } else {
         postDataConfig(this.queryInfo).then(res => {
           if (res.data.code !== 1) {
@@ -219,7 +219,7 @@ export default {
     addMore() {
       window.console.log(this.queryInfo)
       if (this.queryInfo.classify === '' || this.queryInfo.style === '') {
-        this.$message.error('请填写必填下')
+        this.$message.error('请填写必填项')
       } else {
         postDataConfig(this.queryInfo).then(res => {
           if (res.data.code !== 1) {

@@ -167,7 +167,7 @@ export default {
     },
     saveToServe() {
       if (this.queryInfo.classify === '' || this.queryInfo.style === '') {
-        this.$message.error('请填写必填下')
+        this.$message.error('请填写必填项')
       } else {
         addDataConfig(this.queryInfo).then(res => {
           if (res.data.code !== 1) {
@@ -206,7 +206,7 @@ export default {
     addMore() {
       window.console.log(this.queryInfo)
       if (this.queryInfo.classify === '' || this.queryInfo.style === '') {
-        this.$message.error('请填写必填下')
+        this.$message.error('请填写必填项')
       } else {
         addDataConfig(this.queryInfo).then(res => {
           if (res.data.code !== 1) {

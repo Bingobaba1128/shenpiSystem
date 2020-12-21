@@ -6,12 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= webpackConfig.name %></title>
+    <style media="screen" type="text/css">
+      #appLoading { width: 100%; height: 100%; }
+      #appLoading img {
+           position: absolute;
+           display: block;
+           font-size: 50px;
+           line-height: 50px;
+           top: 50%;
+           left: 50%;
+           width: 200px;
+           height: 100px;
+           -webkit-transform: translateY(-50%)  translateX(-50%);
+           transform: translateY(-50%)  translateX(-50%);
+       }
+   </style>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but <%= webpackConfig.name %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+        <div id="appLoading">
+          <!-- <img src="https://img-blog.csdnimg.cn/20190821113437656.gif" alt="系统加载中" /> -->
+          <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1605528914128&di=d2ce5017312056487cf24e192579ae54&imgtype=0&src=http%3A%2F%2Fwww.ppssdd.com%2Fuploads%2Fallimg%2F180906%2F1-1PZ6094043b3.gif" alt="系统加载中" />
+        </div>
     <div id="app"></div>
-    <!-- built files will be auto injected -->
   </body>
 </html>
+
+

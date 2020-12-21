@@ -34,7 +34,7 @@
             </el-col>
             <el-col span="4.5">
               <el-form-item label="类型 :" label-width="90px">
-                <el-select v-model="queryInfo.flagName" placeholder="全部" clearable filterable @change="searchData" @clear="clearData3">
+                <el-select v-model="queryInfo.flagName" placeholder="全部" clearable filterable  @clear="clearData3">
                   <el-option
                     v-for="item in stateList"
                     :key="item.name"

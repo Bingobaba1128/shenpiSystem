@@ -87,11 +87,11 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="6">
-              <el-form-item label="综合搜索 :">
-                <el-input v-model.trim="queryInfo.search" placeholder="" clearable maxlength="100" @keyup.enter.native="searchDataM" @submit.native.prevent />
+            <el-col :span="6">
+              <el-form-item label="系统单号 :">
+                <el-input v-model.trim="queryInfo.pkNo" placeholder="" clearable maxlength="100" @keyup.enter.native="searchDataM" @submit.native.prevent @clear="clearPkNo"/>
               </el-form-item>
-            </el-col> -->
+            </el-col>
 
           </el-row>
         </el-form>
@@ -189,8 +189,8 @@ export default {
         style: '',
         state: '-7',
         stateName1: '',
-        employeeId: sessionStorage.getItem('employeeId')
-
+        employeeId: sessionStorage.getItem('employeeId'),
+        pkNo: ''
       },
       name: sessionStorage.getItem('employeeName'),
       id: sessionStorage.getItem('employeeId'),
@@ -352,8 +352,12 @@ export default {
       this.$set(this.queryInfo, 'approveState', '')
       this.searchDataM()
     },
+    clearPkNo(){
+      this.$set(this.queryInfo, 'pkNo', '')
+      this.searchDataM()
+    },
     showDataM(data) {
-      this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, queryInfo: this.queryInfo, employeeName: data.employeeName, pkNo: data.pkNo, url: data.url, currentTab: 'child4', approveNo: data.approveNo, flagSpecial: 1 }})
+      this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, queryInfo: this.queryInfo, employeeName: data.employeeName, pkNo: data.pkNo, url: data.url, currentTab: 'child4', approveNo: data.approveNo, flagSpecial: 1 , status: false}})
       var setReadable = {
         id: data.id
       }
@@ -384,7 +388,7 @@ export default {
       var now = new Date()
       var year = now.getFullYear()// 得到年份
       var month = now.getMonth()// 得到月份
-      var date = now.getDate() + 1// 得到日期
+      var date = now.getDate() // 得到日期
       month = month + 1
       month = month.toString().padStart(2, '0')
       date = date.toString().padStart(2, '0')
@@ -410,18 +414,19 @@ export default {
       this.$set(this.queryInfo, 'faQiTime', this.getInitDate())
       this.$set(this.queryInfo, 'approveTime', this.getInitDate())
       this.$set(this.queryInfo, 'faQiPerson', '')
-      this.$set(this.queryInfo, 'employeeName', '')
+      // this.$set(this.queryInfo, 'employeeName', '')
       this.$set(this.queryInfo, 'systemName', '')
       this.$set(this.queryInfo, 'classifyName', '')
       this.$set(this.queryInfo, 'stateName', '')
       this.$set(this.queryInfo, 'search', '')
       this.$set(this.queryInfo, 'faQiPersonId', '')
-      this.$set(this.queryInfo, 'employeeId', '')
+      // this.$set(this.queryInfo, 'employeeId', '')
       this.$set(this.queryInfo, 'systemId', '')
       this.$set(this.queryInfo, 'classifyId', '')
       this.$set(this.queryInfo, 'stateName1', '')
       this.$set(this.queryInfo, 'state', '-7')
       this.$set(this.queryInfo, 'approveState', '')
+      this.$set(this.queryInfo, 'pkNo', '')
 
       this.initData()
     },

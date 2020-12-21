@@ -101,11 +101,11 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="6">
-              <el-form-item label="综合搜索 :">
-                <el-input v-model.trim="queryInfo.search" placeholder="" clearable maxlength="100" @keyup.enter.native="searchDataM" @submit.native.prevent />
+            <el-col :span="6">
+              <el-form-item label="系统单号 :">
+                <el-input v-model.trim="queryInfo.pkNo" placeholder="" clearable maxlength="100" @keyup.enter.native="searchDataM" @submit.native.prevent @clear="clearPkNo"/>
               </el-form-item>
-            </el-col> -->
+            </el-col>
 
           </el-row>
         </el-form>
@@ -146,10 +146,10 @@
         <el-table-column label="审批单号" prop="approveNo" show-overflow-tooltip />
         <el-table-column label="系统分类" prop="systemName" show-overflow-tooltip />
         <el-table-column label="单据分类" prop="classifyName" show-overflow-tooltip />
-        <el-table-column label="系统单号" prop="realPkNo" show-overflow-tooltip />
+        <el-table-column label="系统单号" prop="pkNo" show-overflow-tooltip />
         <el-table-column label="标题" prop="biaoTi" show-overflow-tooltip />
         <el-table-column label="申请人" prop="faQiPerson" show-overflow-tooltip />
-        <el-table-column label="操作状态" prop="currentState" show-overflow-tooltip />
+        <!-- <el-table-column label="操作状态" prop="currentState" show-overflow-tooltip /> -->
 
         <el-table-column label="单据状态" prop="stateName" show-overflow-tooltip />
         <el-table-column label="操作" fixed="right">
@@ -209,7 +209,8 @@ export default {
         state: -4,
         employeeId: sessionStorage.getItem('employeeId'),
         deptName: '',
-        deptId: ''
+        deptId: '',
+        pkNo: ''
 
       },
       pageSetting: {
@@ -241,7 +242,7 @@ export default {
       loadDept(param1).then(res => {
         this.deptList = res.data.data
       })
-      var url = '/api/Approve?'
+      var url = '/api/Approve/getAlreadyApprove?'
       if (JSON.parse(sessionStorage.getItem('tabParam'))) {
         this.queryInfo = JSON.parse(sessionStorage.getItem('tabParam'))
       }
@@ -318,6 +319,10 @@ export default {
         this.systemList = res.data.data
       })
     },
+        clearPkNo(){
+      this.$set(this.queryInfo, 'pkNo', '')
+      this.searchDataM()
+    },
     searchDataM() {
       if (this.queryInfo.systemName === '') {
         this.$set(this.queryInfo, 'systemId', '')
@@ -332,7 +337,7 @@ export default {
       }
       this.pageSetting.current = 1
       var searchInfo = combineObject(this.queryInfo, this.pageSetting)
-      var url = '/api/Approve?'
+      var url = '/api/Approve/getAlreadyApprove?'
       var urlParam = toUrlParam(url, searchInfo)
       this.listLoading = true
       searchData(urlParam).then(res => {
@@ -423,7 +428,7 @@ export default {
       this.searchDataM()
     },
     showDataM(data) {
-      this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, employeeName: data.employeeName, pkNo: data.pkNo, url: data.url, currentTab: 'child2', queryInfo: this.queryInfo, flagSpecial: 1, approveNo: data.approveNo, state: data.state }})
+      this.$router.push({ path: '/审批管理/审批详情', query: { employeeId: data.employeeId, employeeName: data.employeeName, pkNo: data.pkNo, url: data.url, currentTab: 'child2', queryInfo: this.queryInfo, flagSpecial: 1, approveNo: data.approveNo, state: data.state ,status: false }})
     },
     bindDanJuId(id) {
       this.$set(this.queryInfo, 'classifyId', id)
@@ -450,7 +455,7 @@ export default {
       var now = new Date()
       var year = now.getFullYear()// 得到年份
       var month = now.getMonth()// 得到月份
-      var date = now.getDate() + 1// 得到日期
+      var date = now.getDate() // 得到日期
       month = month + 1
       month = month.toString().padStart(2, '0')
       date = date.toString().padStart(2, '0')
@@ -475,17 +480,18 @@ export default {
     refreshSearch() {
       this.$set(this.queryInfo, 'faQiTime', this.getInitDate())
       this.$set(this.queryInfo, 'faQiPerson', '')
-      this.$set(this.queryInfo, 'employeeName', '')
+      // this.$set(this.queryInfo, 'employeeName', '')
       this.$set(this.queryInfo, 'systemName', '')
       this.$set(this.queryInfo, 'classifyName', '')
       this.$set(this.queryInfo, 'stateName', '')
       this.$set(this.queryInfo, 'search', '')
       this.$set(this.queryInfo, 'faQiPersonId', '')
-      this.$set(this.queryInfo, 'employeeId', '')
+      // this.$set(this.queryInfo, 'employeeId', '')
       this.$set(this.queryInfo, 'systemId', '')
       this.$set(this.queryInfo, 'classifyId', '')
       this.$set(this.queryInfo, 'deptId', '')
       this.$set(this.queryInfo, 'deptName', '')
+      this.$set(this.queryInfo, 'pkNo', '')
       this.deptList = ''
       this.personList = ''
 
