@@ -61,8 +61,29 @@ export const constantRoutes = [
       {
         path: '审批管理',
         name: '审批管理',
-        component: () => import('@/views/shenPi'),
+        component: () => import('@/views/shenPi/index'),
         meta: { title: '审批管理' }
+      },
+      {
+        path: '审批管理/我审批的',
+        name: '审批管理',
+        component: () => import('@/views/shenPi/index2'),
+        meta: { title: '审批管理' },
+        hidden: true
+      },
+      {
+        path: '审批管理/我发起的',
+        name: '审批管理',
+        component: () => import('@/views/shenPi/index3'),
+        meta: { title: '审批管理' },
+        hidden: true
+      },
+      {
+        path: '审批管理/抄送我的',
+        name: '审批管理',
+        component: () => import('@/views/shenPi/index4'),
+        meta: { title: '审批管理' },
+        hidden: true
       },
       {
         path: '审批详情',

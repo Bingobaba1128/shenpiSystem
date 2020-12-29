@@ -32,10 +32,10 @@ export default {
   },
   data() {
     return {
-      activeName: 'child1',
+      activeName: 'child2',
       // currentTabComponent: child1,
       currentTab: {
-        currentTabComponent: child1
+        currentTabComponent: child2
       },
       userName: sessionStorage.getItem('employeeName')
 

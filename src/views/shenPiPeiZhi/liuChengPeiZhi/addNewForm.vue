@@ -143,7 +143,7 @@ export default {
     },
     bindDeptId(id) {
       this.queryInfo.deptId = id
-      var url = '/ERP/selectEmplyee?symbol=2&duty=' + id
+      var url = '/ERP/selectEmplyee2?symbol=2&duty=' + id
       loadPerson(url).then(res => {
         this.personList = res.data.data
       })
